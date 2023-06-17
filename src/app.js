@@ -1,7 +1,7 @@
 require("dotenv").config();
-const express = require("express");
-const cors = require("cors");
-const morgan = require("morgan");
+const express = require(".pnpm/express@4.18.2/node_modules/express");
+const cors = require(".pnpm/cors@2.8.5/node_modules/cors");
+const morgan = require(".pnpm/morgan@1.10.0/node_modules/morgan");
 const helmet = require("helmet");
 const rateLimit = require("express-rate-limit");
 
