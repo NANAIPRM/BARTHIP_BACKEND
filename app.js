@@ -6,6 +6,7 @@ const helmet = require("helmet");
 const rateLimit = require("express-rate-limit");
 const messageRoute = require('./routes/messageRoute')
 const authRoute = require('./routes/authRoute')
+const roomRoute = require('./routes/roomRoute')
 const http = require("http");
 const { Server } = require('socket.io');
 
@@ -36,6 +37,7 @@ app.use(express.json());
 
 app.use('/auth', authRoute)
 app.use('/messages', messageRoute)
+app.use('/room', roomRoute)
 
 app.use(notFoundMiddleware);
 app.use(errorMiddleware);
@@ -53,11 +55,8 @@ const onlineUser = {}
 
 io.use((socket, next) => {
   const userId = socket.handshake.auth.eiei;
-  console.log(userId)
-  // console.log(socket.id);
-  // console.log(userId);
+  
   if (!userId) {
-    // console.log(chalk.red('error connect'));
     return next(new Error("invalid username"));
   }
   socket.userId = userId
@@ -67,43 +66,18 @@ io.use((socket, next) => {
 });
 
 
-
-
-
 io.on("connection", (socket) => {
-  global.chatSocket = socket;
-  // socket.on("add-user", (userId) => {
-  //   onlineUser.set(userId, socket.id);
-  // });
-
+  // global.chatSocket = socket;
+  
   socket.on("room",id => {
     socket.join(id)
   })
 
   socket.on("send-msg",(data) => {
-    console.log(data)
+    console.log("5555555")
     socket.to(data.room).emit("msg-recieve",data)
   })
 
-  // socket.on("send-msg", (data) => {
-  //   console.log(data)
-  //   const sendUserId = data.to
-  //   console.log(sendUserId) // idคนรับ
-    
-  //   console.log(onlineUser[sendUserId])
-  //   // console.log(onlineUser.sendUserId)
-  //   if (data != undefined) {
-  //     socket.to(onlineUser[sendUserId]).emit("msg-recieve", data);
-  //     // console.log(data)
-  //   }
-  // });
-
-
-  // socket.on('sendMessage', input => {
-  //   console.log(input);
-  //   socket.to(onlineUser[input?.to]).emit('receiveMessage', input)
-  //   // io.to(onlineUser[input?.senderId]).emit('receiveMessage', input)
-  // })
 });
 
 
