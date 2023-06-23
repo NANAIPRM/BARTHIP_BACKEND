@@ -1,14 +1,17 @@
 const createError = require('../utils/create-error')
 const tokenService = require('../services/token-service')
 const jwtDecode = require('jwt-decode')
-const User = require('../models')
+const { User } = require('../models')
 
 exports.googleLogin = async (req, res, next) => {
     try {
         const { credential } = req.body
+        // console.log(credential)
         const isToken = await tokenService.verifyGoogle(credential)
-        if (!isToken) throw new createError('Invalid Google-Token ', 401)
+        // console.log(isToken)
+        if (!isToken) throw createError('Invalid Google-Token ', 401)
         const googleUser = jwtDecode(credential)
+        // console.log(googleUser)
         const user = await User.findOne({
             where: {
                 email: googleUser.email,

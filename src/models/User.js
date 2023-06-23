@@ -9,11 +9,8 @@ module.exports = (sequelize, DataTypes) => {
                     isEmail: true,
                 },
             },
-            password: {
-                type: DataTypes.STRING,
-                allowNull: false,
-            },
-            googleToken: DataTypes.STRING,
+            password: DataTypes.STRING,
+            googleToken: DataTypes.TEXT,
             nickname: DataTypes.STRING,
         },
         {
