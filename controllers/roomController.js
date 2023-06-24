@@ -10,9 +10,13 @@ exports.createRoom = (req, res, next) => {
         }).then(ky => {
             res.json(ky)
         })
-        
-        
     })
     .catch(next)
 }
 
+
+exports.getRoom =  (req, res, next) => {
+    Room.findAll().then( rs => {
+        res.json(rs)
+    }).catch(next)
+}

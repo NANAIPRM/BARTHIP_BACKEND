@@ -51,9 +51,11 @@ const io = new Server(server, {
   },
 });
 
-const onlineUser = {}
+const onlineUser = []
+const onlineUserRoom= []
 
 io.use((socket, next) => {
+  // console.log("55555")
   const userId = socket.handshake.auth.eiei;
   
   if (!userId) {
@@ -61,22 +63,40 @@ io.use((socket, next) => {
   }
   socket.userId = userId
   onlineUser[userId] = socket.id
-  console.log(onlineUser)
+  // console.log(onlineUser)
   next();
 });
+console.log(onlineUserRoom)
+
 
 
 io.on("connection", (socket) => {
   // global.chatSocket = socket;
+  socket.emit("online-user",onlineUser)
+  // console.log(onlineUser)
   
   socket.on("room",id => {
-    socket.join(id)
+    const room = id
+    const userRoom = onlineUserRoom[room] || 0
+    console.log(userRoom)
+    if (userRoom < 10) {
+      socket.join(room);
+      onlineUserRoom[room] = userRoom + 1;
+      socket.emit("roomJoined", { room, userRoom: userRoom + 1 });
+     
+    } else {
+      socket.emit("roomFull", { room, userRoom });
+    }
+
   })
 
   socket.on("send-msg",(data) => {
-    console.log("5555555")
+  
     socket.to(data.room).emit("msg-recieve",data)
   })
+  
+
+ 
 
 });
 
