@@ -2,6 +2,7 @@ module.exports = (sequelize, DataTypes) => {
     const Avatar = sequelize.define(
         'Avatar',
         {
+            name: DataTypes.STRING,
             image: DataTypes.STRING,
             price: DataTypes.INTEGER,
         },

@@ -2,6 +2,7 @@ module.exports = (sequelize, DataTypes) => {
     const Hat = sequelize.define(
         'Hat',
         {
+            name: DataTypes.STRING,
             image: DataTypes.STRING,
             price: DataTypes.INTEGER,
         },
