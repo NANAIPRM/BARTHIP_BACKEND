@@ -165,8 +165,6 @@ exports.EditDrink = async (req, res, next) => {
     }
 }
 
-// DELETE PRODUCT
-
 // DELETE Product
 exports.DeleteAvatar = async (req, res, next) => {
     try {
@@ -209,6 +207,85 @@ exports.DeleteDrink = async (req, res, next) => {
         }
 
         res.status(200).json({ message: 'Drink deleted successfully' })
+    } catch (err) {
+        next(err)
+    }
+}
+
+// GET ALL Product
+
+exports.GetAllAvatars = async (req, res, next) => {
+    try {
+        const avatars = await Avatar.findAll()
+
+        res.status(200).json({ avatars })
+    } catch (err) {
+        next(err)
+    }
+}
+exports.GetAllHats = async (req, res, next) => {
+    try {
+        const hats = await Hat.findAll()
+
+        res.status(200).json({ hats })
+    } catch (err) {
+        next(err)
+    }
+}
+exports.GetAllDrinks = async (req, res, next) => {
+    try {
+        const drinks = await Drink.findAll()
+
+        res.status(200).json({ drinks })
+    } catch (err) {
+        next(err)
+    }
+}
+
+// GET Product By ProductId
+const { Avatar } = require('../models')
+
+exports.GetAvatarById = async (req, res, next) => {
+    try {
+        const { avatarId } = req.params
+
+        const avatar = await Avatar.findByPk(avatarId)
+
+        if (!avatar) {
+            throw createError(404, 'Avatar not found')
+        }
+
+        res.status(200).json({ avatar })
+    } catch (err) {
+        next(err)
+    }
+}
+exports.GetHatById = async (req, res, next) => {
+    try {
+        const { hatId } = req.params
+
+        const hat = await Hat.findByPk(hatId)
+
+        if (!hat) {
+            throw createError(404, 'Hat not found')
+        }
+
+        res.status(200).json({ hat })
+    } catch (err) {
+        next(err)
+    }
+}
+exports.GetDrinkById = async (req, res, next) => {
+    try {
+        const { drinkId } = req.params
+
+        const drink = await Drink.findByPk(drinkId)
+
+        if (!drink) {
+            throw createError(404, 'Drink not found')
+        }
+
+        res.status(200).json({ drink })
     } catch (err) {
         next(err)
     }

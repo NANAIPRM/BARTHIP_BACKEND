@@ -22,4 +22,14 @@ router.delete('/avatar/:id', productController.DeleteAvatar)
 router.delete('/hat/:id', productController.DeleteHat)
 router.delete('/drink/:id', productController.DeleteHat)
 
+// Get All Product
+router.get('/avatar', productController.GetAllAvatars)
+router.get('/hat', productController.GetAllHats)
+router.get('/drink', productController.GetAllDrinks)
+
+// GET Product By ProductId
+router.get('/avatar/:id', productController.GetAvatarById)
+router.get('/hat/:id', productController.GetHatById)
+router.get('/drink/:id', productController.GetDrinkById)
+
 module.exports = router
