@@ -4,6 +4,7 @@ const cors = require('.pnpm/cors@2.8.5/node_modules/cors')
 const morgan = require('.pnpm/morgan@1.10.0/node_modules/morgan')
 const helmet = require('helmet')
 const rateLimit = require('express-rate-limit')
+const http = require('http')
 
 const authRoute = require('./routes/authRoute')
 const productRoute = require('./routes/product-route')
@@ -12,6 +13,7 @@ const notFoundMiddleware = require('./middlewares/notFound')
 const errorMiddleware = require('./middlewares/error')
 
 const app = express()
+const server = http.createServer(app)
 
 if (process.env.NODE_ENV === 'development') {
     app.use(morgan('combined'))
@@ -36,4 +38,5 @@ app.use(errorMiddleware)
 
 const port = process.env.PORT || 8000
 
-app.listen(port, () => console.log('server running in port ' + port))
+// app.listen(port, () => console.log('server running in port ' + port))
+module.exports = server
