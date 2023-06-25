@@ -243,7 +243,6 @@ exports.GetAllDrinks = async (req, res, next) => {
 }
 
 // GET Product By ProductId
-const { Avatar } = require('../models')
 
 exports.GetAvatarById = async (req, res, next) => {
     try {
