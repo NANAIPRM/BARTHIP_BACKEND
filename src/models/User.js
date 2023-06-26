@@ -9,6 +9,10 @@ module.exports = (sequelize, DataTypes) => {
                     isEmail: true,
                 },
             },
+            isAdmin: {
+                type: DataTypes.BOOLEAN,
+                defaultValue: false,
+            },
             password: DataTypes.STRING,
             googleToken: DataTypes.TEXT,
             nickname: DataTypes.STRING,
