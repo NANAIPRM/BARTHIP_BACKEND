@@ -24,9 +24,8 @@ exports.AddAvatar = async (req, res, next) => {
 exports.AddDrink = async (req, res, next) => {
     try {
         const { name, price } = req.body
-        const image = await (
-            await uploadService.upload(req.file.path)
-        ).secure_url
+        const image = (await uploadService.upload(req.file.path)).secure_url
+        console.log(image)
 
         const createdDrink = await Drink.create({
             name,
