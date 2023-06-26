@@ -9,6 +9,10 @@ module.exports = (sequelize, DataTypes) => {
                     isEmail: true,
                 },
             },
+            isAdmin: {
+                type: DataTypes.BOOLEAN,
+                defaultValue: false,
+            },
             password: DataTypes.STRING,
             googleToken: DataTypes.TEXT,
             nickname: DataTypes.STRING,
@@ -36,14 +40,6 @@ module.exports = (sequelize, DataTypes) => {
         })
 
         User.hasMany(models.UserDrink, {
-            foreignKey: {
-                name: 'userId',
-                allowNull: false,
-            },
-            onDelete: 'RESTRICT',
-        })
-
-        User.hasMany(models.Message, {
             foreignKey: {
                 name: 'userId',
                 allowNull: false,

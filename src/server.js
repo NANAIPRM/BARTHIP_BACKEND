@@ -29,6 +29,8 @@ io.use((socket, next) => {
 })
 
 io.on('connection', (socket) => {
+    console.log(onlineUser)
+    io.emit('onlinefriends', onlineUser)
     socket.on('room', (data) => {
         const room = data
         const occupants = roomOccupancy[room] || 0
@@ -79,7 +81,12 @@ io.on('connection', (socket) => {
         console.log(roomOccupancy[room]) // แสดงจำนวนผู้ใช้ในห้องหลังจากลด
     })
 
-    socket.on('disconnect', () => {})
+    socket.on('disconnect', () => {
+        delete onlineUser[socket.userId]
+        console.log(onlineUser)
+        io.emit('onlinefriends', onlineUser)
+        console.log('User Disconnected', socket.id, socket.userId, 'userId')
+    })
 })
 
 const port = process.env.PORT || 8080
