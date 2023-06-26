@@ -6,9 +6,7 @@ const { Avatar, Drink, Hat } = require('../models')
 exports.AddAvatar = async (req, res, next) => {
     try {
         const { name, price } = req.body
-        const image = await (
-            await uploadService.upload(req.file.path)
-        ).secure_url
+        const image = await uploadService.upload(req.file.path).secure_url
 
         const createdAvatar = await Avatar.create({
             name,
@@ -24,9 +22,7 @@ exports.AddAvatar = async (req, res, next) => {
 exports.AddDrink = async (req, res, next) => {
     try {
         const { name, price } = req.body
-        const image = await (
-            await uploadService.upload(req.file.path)
-        ).secure_url
+        const image = await uploadService.upload(req.file.path).secure_url
 
         const createdDrink = await Drink.create({
             name,
@@ -42,9 +38,7 @@ exports.AddDrink = async (req, res, next) => {
 exports.AddHat = async (req, res, next) => {
     try {
         const { name, price } = req.body
-        const image = await (
-            await uploadService.upload(req.file.path)
-        ).secure_url
+        const image = await uploadService.upload(req.file.path).secure_url
 
         const createdHat = await Hat.create({
             name,
