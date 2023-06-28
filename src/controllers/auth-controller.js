@@ -69,3 +69,27 @@ exports.login = async (req, res, next) => {
         next(err)
     }
 }
+
+exports.editNameByUserId = async (req, res, next) => {
+    try {
+        console.log(req.body)
+        const { id, nickname } = req.body
+
+        const user = await User.findOne({
+            where: {
+                id: id,
+            },
+        })
+
+        if (!user) {
+            throw createError('User not found', 404)
+        }
+
+        user.nickname = nickname
+        await user.save()
+
+        res.status(200).json({ message: 'Nickname updated successfully' })
+    } catch (err) {
+        next(err)
+    }
+}
