@@ -35,12 +35,14 @@ io.on('connection', (socket) => {
     socket.on('room', (data) => {
         const room = data
         const occupants = roomOccupancy[room] || 0
-        joinedRooms.push(room)
 
         if (occupants < 2) {
             socket.join(room)
             roomOccupancy[room] = occupants + 1
             socket.emit('roomJoined', { room, occupants: occupants + 1 })
+            if (!joinedRooms.includes(room)) {
+                joinedRooms.push(room)
+            }
         } else {
             socket.emit('roomFull', { room, occupants })
         }
@@ -67,7 +69,7 @@ io.on('connection', (socket) => {
         roomOccupancy[room] -= 1
         console.log(roomOccupancy[room])
         console.log(joinedRooms)
-        if (roomOccupancy[room] === 0) {
+        if (roomOccupancy[room] <= 0) {
             const index = joinedRooms.indexOf(room)
             if (index > -1) {
                 joinedRooms.splice(index, 1)
@@ -80,7 +82,7 @@ io.on('connection', (socket) => {
 
     socket.on('disconnect', () => {
         roomOccupancy[joinedRooms] -= 1
-        if (roomOccupancy[joinedRooms] === 0) {
+        if (roomOccupancy[joinedRooms] <= 0) {
             const index = joinedRooms.indexOf(joinedRooms)
             if (index > -1) {
                 joinedRooms.splice(index, 1)
