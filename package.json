@@ -4,6 +4,7 @@
     "description": "",
     "main": "app.js",
     "scripts": {
+        "proxy": "<http://localhost:4242>",
         "dev": "nodemon src/server.js",
         "db:sync": "node src/initialize/database.js"
     },
@@ -26,7 +27,8 @@
         "mysql2": "^3.4.0",
         "path": "^0.12.7",
         "sequelize": "^6.32.1",
-        "socket.io": "^4.7.0"
+        "socket.io": "^4.7.0",
+        "stripe": "^12.10.0"
     },
     "devDependencies": {
         "morgan": "^1.10.0",
