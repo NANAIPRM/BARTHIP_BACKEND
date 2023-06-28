@@ -64,14 +64,16 @@ io.on('connection', (socket) => {
     })
 
     socket.on('leaveRoom', (room) => {
-        // console.log(room)
         roomOccupancy[room] -= 1
+        console.log(roomOccupancy[room])
+        console.log(joinedRooms)
         if (roomOccupancy[room] === 0) {
             const index = joinedRooms.indexOf(room)
             if (index > -1) {
                 joinedRooms.splice(index, 1)
             }
         }
+        console.log(joinedRooms)
         // console.log(roomOccupancy[room])
         // console.log(joinedRooms)
     })
