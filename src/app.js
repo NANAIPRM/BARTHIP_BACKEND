@@ -8,6 +8,7 @@ const http = require('http')
 
 const authRoute = require('./routes/authRoute')
 const productRoute = require('./routes/product-route')
+const orderRoute = require('./routes/order-route')
 
 const notFoundMiddleware = require('./middlewares/notFound')
 const errorMiddleware = require('./middlewares/error')
@@ -32,6 +33,7 @@ app.use(express.json())
 
 app.use('/auth', authRoute)
 app.use('/product', productRoute)
+app.use('/order', orderRoute)
 
 app.use(notFoundMiddleware)
 app.use(errorMiddleware)

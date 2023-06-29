@@ -4,7 +4,6 @@
     "description": "",
     "main": "app.js",
     "scripts": {
-        "proxy": "<http://localhost:4242>",
         "dev": "nodemon src/server.js",
         "db:sync": "node src/initialize/database.js"
     },
