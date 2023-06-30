@@ -42,6 +42,8 @@ exports.payment = async (req, res, next) => {
         //   });
         //   console.log("_______aa", req.query);
 
+        console.log('response callback', response)
+
         const { customer_details, payment_status } = response.session
         console.log(customer_details)
         const { email } = customer_details
