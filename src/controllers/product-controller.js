@@ -12,7 +12,7 @@ const {
 // ADD PRODUCT
 exports.AddAvatar = async (req, res, next) => {
     try {
-        const { name, price } = req.body
+        const { name, price, desciption } = req.body
         const image = await (
             await uploadService.upload(req.file.path)
         ).secure_url
@@ -21,6 +21,7 @@ exports.AddAvatar = async (req, res, next) => {
             name,
             image,
             price,
+            desciption,
         })
 
         res.status(200).json({ product: createdAvatar })
@@ -30,7 +31,7 @@ exports.AddAvatar = async (req, res, next) => {
 }
 exports.AddDrink = async (req, res, next) => {
     try {
-        const { name, price } = req.body
+        const { name, price, desciption } = req.body
         const image = await (
             await uploadService.upload(req.file.path)
         ).secure_url
@@ -39,6 +40,7 @@ exports.AddDrink = async (req, res, next) => {
             name,
             image,
             price,
+            desciption,
         })
 
         res.status(200).json({ product: createdDrink })
@@ -48,7 +50,7 @@ exports.AddDrink = async (req, res, next) => {
 }
 exports.AddHat = async (req, res, next) => {
     try {
-        const { name, price } = req.body
+        const { name, price, desciption } = req.body
         const image = await (
             await uploadService.upload(req.file.path)
         ).secure_url
@@ -57,6 +59,7 @@ exports.AddHat = async (req, res, next) => {
             name,
             image,
             price,
+            desciption,
         })
 
         res.status(200).json({ product: createdHat })

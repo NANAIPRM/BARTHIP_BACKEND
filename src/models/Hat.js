@@ -3,6 +3,7 @@ module.exports = (sequelize, DataTypes) => {
         'Hat',
         {
             name: DataTypes.STRING,
+            desciption: DataTypes.STRING,
             image: DataTypes.STRING,
             price: DataTypes.INTEGER,
         },
