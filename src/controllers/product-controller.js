@@ -12,7 +12,7 @@ const {
 // ADD PRODUCT
 exports.AddAvatar = async (req, res, next) => {
     try {
-        const { name, price, desciption } = req.body
+        const { name, price, description } = req.body
         const image = await (
             await uploadService.upload(req.file.path)
         ).secure_url
@@ -21,7 +21,7 @@ exports.AddAvatar = async (req, res, next) => {
             name,
             image,
             price,
-            desciption,
+            description,
         })
 
         res.status(200).json({ product: createdAvatar })
@@ -31,7 +31,7 @@ exports.AddAvatar = async (req, res, next) => {
 }
 exports.AddDrink = async (req, res, next) => {
     try {
-        const { name, price, desciption } = req.body
+        const { name, price, description } = req.body
         const image = await (
             await uploadService.upload(req.file.path)
         ).secure_url
@@ -40,7 +40,7 @@ exports.AddDrink = async (req, res, next) => {
             name,
             image,
             price,
-            desciption,
+            description,
         })
 
         res.status(200).json({ product: createdDrink })
@@ -50,7 +50,7 @@ exports.AddDrink = async (req, res, next) => {
 }
 exports.AddHat = async (req, res, next) => {
     try {
-        const { name, price, desciption } = req.body
+        const { name, price, description } = req.body
         const image = await (
             await uploadService.upload(req.file.path)
         ).secure_url
@@ -59,7 +59,7 @@ exports.AddHat = async (req, res, next) => {
             name,
             image,
             price,
-            desciption,
+            description,
         })
 
         res.status(200).json({ product: createdHat })
@@ -72,7 +72,7 @@ exports.AddHat = async (req, res, next) => {
 exports.EditAvatar = async (req, res, next) => {
     try {
         const { id } = req.params
-        const { name, price } = req.body
+        const { name, price, description } = req.body
 
         const image = req.file
             ? (await uploadService.upload(req.file.path)).secure_url
@@ -87,6 +87,9 @@ exports.EditAvatar = async (req, res, next) => {
         }
         if (image) {
             updateData.image = image
+        }
+        if (description) {
+            updateData.description = description
         }
 
         await Avatar.update(updateData, {
@@ -107,7 +110,7 @@ exports.EditAvatar = async (req, res, next) => {
 exports.EditHat = async (req, res, next) => {
     try {
         const { id } = req.params
-        const { name, price } = req.body
+        const { name, price, description } = req.body
 
         const image = req.file
             ? (await uploadService.upload(req.file.path)).secure_url
@@ -122,6 +125,9 @@ exports.EditHat = async (req, res, next) => {
         }
         if (image) {
             updateData.image = image
+        }
+        if (description) {
+            updateData.description = description
         }
 
         await Hat.update(updateData, {
@@ -142,7 +148,7 @@ exports.EditHat = async (req, res, next) => {
 exports.EditDrink = async (req, res, next) => {
     try {
         const { id } = req.params
-        const { name, price } = req.body
+        const { name, price, description } = req.body
 
         const image = req.file
             ? (await uploadService.upload(req.file.path)).secure_url
@@ -157,6 +163,9 @@ exports.EditDrink = async (req, res, next) => {
         }
         if (image) {
             updateData.image = image
+        }
+        if (description) {
+            updateData.description = description
         }
 
         await Drink.update(updateData, {
@@ -180,7 +189,7 @@ exports.DeleteAvatar = async (req, res, next) => {
     try {
         const { id } = req.params
 
-        const deletedAvatar = await Avatar.destroy({ where: { id: id } })
+        const deletedAvatar = await Avatar.destroy({ where: { id } })
 
         if (deletedAvatar === 0) {
             throw createError(404, 'Avatar not found')
@@ -193,9 +202,9 @@ exports.DeleteAvatar = async (req, res, next) => {
 }
 exports.DeleteHat = async (req, res, next) => {
     try {
-        const { hatId } = req.params
+        const { id } = req.params
 
-        const deletedHat = await Hat.destroy({ where: { id: hatId } })
+        const deletedHat = await Hat.destroy({ where: { id } })
 
         if (deletedHat === 0) {
             throw createError(404, 'Hat not found')
@@ -208,9 +217,9 @@ exports.DeleteHat = async (req, res, next) => {
 }
 exports.DeleteDrink = async (req, res, next) => {
     try {
-        const { drinkId } = req.params
+        const { id } = req.params
 
-        const deletedDrink = await Drink.destroy({ where: { id: drinkId } })
+        const deletedDrink = await Drink.destroy({ where: { id } })
 
         if (deletedDrink === 0) {
             throw createError(404, 'Drink not found')
@@ -256,9 +265,9 @@ exports.GetAllDrinks = async (req, res, next) => {
 
 exports.GetAvatarById = async (req, res, next) => {
     try {
-        const { avatarId } = req.params
+        const { id } = req.params
 
-        const avatar = await Avatar.findByPk(avatarId)
+        const avatar = await Avatar.findOne({ where: { id } })
 
         if (!avatar) {
             throw createError(404, 'Avatar not found')
@@ -271,9 +280,9 @@ exports.GetAvatarById = async (req, res, next) => {
 }
 exports.GetHatById = async (req, res, next) => {
     try {
-        const { hatId } = req.params
+        const { id } = req.params
 
-        const hat = await Hat.findByPk(hatId)
+        const hat = await Hat.findOne({ where: { id } })
 
         if (!hat) {
             throw createError(404, 'Hat not found')
@@ -286,9 +295,9 @@ exports.GetHatById = async (req, res, next) => {
 }
 exports.GetDrinkById = async (req, res, next) => {
     try {
-        const { drinkId } = req.params
+        const { id } = req.params
 
-        const drink = await Drink.findByPk(drinkId)
+        const drink = await Drink.findOne({ where: { id } })
 
         if (!drink) {
             throw createError(404, 'Drink not found')
