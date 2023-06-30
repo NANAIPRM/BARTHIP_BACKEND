@@ -1,17 +1,27 @@
 const createError = require('../utils/create-error')
 const uploadService = require('../services/upload-service')
-const { Avatar, Drink, Hat } = require('../models')
+const {
+    Avatar,
+    Drink,
+    Hat,
+    UserDrink,
+    UserHat,
+    UserAvatar,
+} = require('../models')
 
 // ADD PRODUCT
 exports.AddAvatar = async (req, res, next) => {
     try {
-        const { name, price } = req.body
-        const image = await uploadService.upload(req.file.path).secure_url
+        const { name, price, desciption } = req.body
+        const image = await (
+            await uploadService.upload(req.file.path)
+        ).secure_url
 
         const createdAvatar = await Avatar.create({
             name,
             image,
             price,
+            desciption,
         })
 
         res.status(200).json({ product: createdAvatar })
@@ -21,13 +31,16 @@ exports.AddAvatar = async (req, res, next) => {
 }
 exports.AddDrink = async (req, res, next) => {
     try {
-        const { name, price } = req.body
-        const image = await uploadService.upload(req.file.path).secure_url
+        const { name, price, desciption } = req.body
+        const image = await (
+            await uploadService.upload(req.file.path)
+        ).secure_url
 
         const createdDrink = await Drink.create({
             name,
             image,
             price,
+            desciption,
         })
 
         res.status(200).json({ product: createdDrink })
@@ -37,13 +50,16 @@ exports.AddDrink = async (req, res, next) => {
 }
 exports.AddHat = async (req, res, next) => {
     try {
-        const { name, price } = req.body
-        const image = await uploadService.upload(req.file.path).secure_url
+        const { name, price, desciption } = req.body
+        const image = await (
+            await uploadService.upload(req.file.path)
+        ).secure_url
 
         const createdHat = await Hat.create({
             name,
             image,
             price,
+            desciption,
         })
 
         res.status(200).json({ product: createdHat })
@@ -279,6 +295,65 @@ exports.GetDrinkById = async (req, res, next) => {
         }
 
         res.status(200).json({ drink })
+    } catch (err) {
+        next(err)
+    }
+}
+
+// GET DRINK BY USERID
+
+exports.GetAllDrinkByUserId = async (req, res, next) => {
+    try {
+        const id = req.user.id
+
+        const drinks = await UserDrink.findAll({
+            where: { userId: id },
+            include: Drink,
+        })
+
+        if (!drinks) {
+            throw createError(404, 'Drink not found')
+        }
+
+        res.status(200).json({ drinks })
+    } catch (err) {
+        next(err)
+    }
+}
+
+exports.GetAllHatByUserId = async (req, res, next) => {
+    try {
+        const id = req.user.id
+
+        const hats = await UserHat.findAll({
+            where: { userId: id },
+            include: Hat,
+        })
+
+        if (!hats) {
+            throw createError(404, 'Hat not found')
+        }
+
+        res.status(200).json({ hats })
+    } catch (err) {
+        next(err)
+    }
+}
+
+exports.GetAllAvatarByUserId = async (req, res, next) => {
+    try {
+        const id = req.user.id
+
+        const avatars = await UserAvatar.findAll({
+            where: { userId: id },
+            include: Avatar,
+        })
+
+        if (!avatars) {
+            throw createError(404, 'Avatar not found')
+        }
+
+        res.status(200).json({ avatars })
     } catch (err) {
         next(err)
     }

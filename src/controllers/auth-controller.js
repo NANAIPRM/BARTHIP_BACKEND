@@ -5,7 +5,7 @@ const {
 const bcryptService = require('../services/bcrypt-service')
 const tokenService = require('../services/token-service')
 const createError = require('../utils/create-error')
-const { User } = require('../models')
+const { User, UserDrink } = require('../models')
 
 exports.getMe = (req, res, next) => {
     res.status(200).json({ user: req.user })
@@ -37,6 +37,15 @@ exports.register = async (req, res, next) => {
             password: value.password,
         })
 
+        // await Promise.all(
+        //     Array.from({ length: 6 }, (_, index) =>
+        //         UserDrink.create({
+        //             userId: user.id,
+        //             drinkId: index + 2,
+        //         })
+        //     )
+        // )
+
         // Sign token and send response
         const accessToken = tokenService.sign({ id: user.id })
         res.status(200).json({ accessToken })
@@ -65,6 +74,30 @@ exports.login = async (req, res, next) => {
         }
         const accessToken = tokenService.sign({ id: user.id })
         res.status(200).json({ accessToken })
+    } catch (err) {
+        next(err)
+    }
+}
+
+exports.editNameByUserId = async (req, res, next) => {
+    try {
+        console.log(req.body)
+        const { id, nickname } = req.body
+
+        const user = await User.findOne({
+            where: {
+                id: id,
+            },
+        })
+
+        if (!user) {
+            throw createError('User not found', 404)
+        }
+
+        user.nickname = nickname
+        await user.save()
+
+        res.status(200).json({ message: 'Nickname updated successfully' })
     } catch (err) {
         next(err)
     }

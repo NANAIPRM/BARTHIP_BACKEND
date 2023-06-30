@@ -3,9 +3,10 @@ module.exports = (sequelize, DataTypes) => {
         'Drink',
         {
             name: DataTypes.STRING,
-            description: DataTypes.STRING,
+            desciption: DataTypes.STRING,
             image: DataTypes.STRING,
             price: DataTypes.INTEGER,
+            apiId: DataTypes.STRING,
         },
         {
             underscored: true,

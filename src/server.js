@@ -11,6 +11,7 @@ const io = new Server(server, {
 
 let roomOccupancy = {}
 const joinedRooms = []
+console.log('----', joinedRooms)
 const onlineUser = {}
 
 io.use((socket, next) => {
@@ -38,8 +39,6 @@ io.on('connection', (socket) => {
         if (occupants < 2) {
             socket.join(room)
             roomOccupancy[room] = occupants + 1
-            console.log(roomOccupancy[room])
-
             socket.emit('roomJoined', { room, occupants: occupants + 1 })
             if (!joinedRooms.includes(room)) {
                 joinedRooms.push(room)
@@ -55,20 +54,10 @@ io.on('connection', (socket) => {
         )
         const randomIndex = Math.floor(Math.random() * vacantRooms.length)
         const room = vacantRooms[randomIndex]
-
         const occupants = roomOccupancy[room] || 0
-
-        if (vacantRooms.length > 0) {
-            const room = vacantRooms[0] // เลือกห้องแรกจาก vacantRooms
-            const occupants = roomOccupancy[room] || 0
-
-            socket.join(room)
-            roomOccupancy[room] = occupants + 1
-
-            socket.emit('roomJoined', { room, occupants: occupants + 1 })
-        } else {
-            socket.emit('roomFull', { room, occupants })
-        }
+        roomOccupancy[room] += 1
+        socket.join(room)
+        socket.emit('roomJoined', { room: room, occupants: occupants + 1 })
     })
 
     socket.on('message', (data) => {
@@ -77,11 +66,28 @@ io.on('connection', (socket) => {
     })
 
     socket.on('leaveRoom', (room) => {
-        roomOccupancy[room] -= 1 // ลดจำนวนผู้ใช้ในห้องลงทีละ 1
-        console.log(roomOccupancy[room]) // แสดงจำนวนผู้ใช้ในห้องหลังจากลด
+        roomOccupancy[room] -= 1
+        console.log(roomOccupancy[room])
+        console.log(joinedRooms)
+        if (roomOccupancy[room] <= 0) {
+            const index = joinedRooms.indexOf(room)
+            if (index > -1) {
+                joinedRooms.splice(index, 1)
+            }
+        }
+        console.log(joinedRooms)
+        // console.log(roomOccupancy[room])
+        // console.log(joinedRooms)
     })
 
     socket.on('disconnect', () => {
+        roomOccupancy[joinedRooms] -= 1
+        if (roomOccupancy[joinedRooms] <= 0) {
+            const index = joinedRooms.indexOf(joinedRooms)
+            if (index > -1) {
+                joinedRooms.splice(index, 1)
+            }
+        }
         delete onlineUser[socket.userId]
         console.log(onlineUser)
         io.emit('onlinefriends', onlineUser)
