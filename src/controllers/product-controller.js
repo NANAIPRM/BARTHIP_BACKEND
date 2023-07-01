@@ -1,6 +1,6 @@
 const createError = require('../utils/create-error')
 const uploadService = require('../services/upload-service')
-const { Avatar, Drink, Hat, UserHat, User } = require('../models')
+const { Avatar, Drink, Hat, UserHat, UserAvatar, UserDrink } = require('../models')
 
 // ADD PRODUCT
 exports.AddAvatar = async (req, res, next) => {
