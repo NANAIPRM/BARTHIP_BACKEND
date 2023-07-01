@@ -7,6 +7,7 @@ const {
     UserDrink,
     UserHat,
     UserAvatar,
+    User,
 } = require('../models')
 
 // ADD PRODUCT
@@ -363,6 +364,33 @@ exports.GetAllAvatarByUserId = async (req, res, next) => {
         }
 
         res.status(200).json({ avatars })
+    } catch (err) {
+        next(err)
+    }
+}
+
+exports.UpdateAvatarByUserId = async (req, res, next) => {
+    try {
+        const id = req.user.id
+        const { drinkId, hatId, avatarId } = req.body
+        console.log(id)
+
+        const [affectedRows] = await User.update(
+            {
+                avatarId,
+                hatId,
+                drinkId,
+            },
+            {
+                where: { id },
+            }
+        )
+
+        if (affectedRows === 0) {
+            throw createError(404, 'User not found')
+        }
+
+        res.status(200).json({ message: 'User updated successfully' })
     } catch (err) {
         next(err)
     }

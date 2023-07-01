@@ -27,6 +27,13 @@ module.exports = (sequelize, DataTypes) => {
             },
             onDelete: 'RESTRICT',
         })
+        Hat.hasMany(models.User, {
+            foreignKey: {
+                name: 'hatId',
+                allowNull: true,
+            },
+            onDelete: 'RESTRICT',
+        })
     }
     return Hat
 }

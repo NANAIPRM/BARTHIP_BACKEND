@@ -27,6 +27,14 @@ module.exports = (sequelize, DataTypes) => {
             },
             onDelete: 'RESTRICT',
         })
+
+        Avatar.hasMany(models.User, {
+            foreignKey: {
+                name: 'avatarId',
+                allowNull: true,
+            },
+            onDelete: 'RESTRICT',
+        })
     }
     return Avatar
 }

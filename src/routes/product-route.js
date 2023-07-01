@@ -50,4 +50,11 @@ router.get(
     productController.GetAllAvatarByUserId
 )
 
+// Update Avatar By UserId
+router.patch(
+    '/userAvatar',
+    authenticateMiddleware,
+    productController.UpdateAvatarByUserId
+)
+
 module.exports = router

@@ -27,6 +27,13 @@ module.exports = (sequelize, DataTypes) => {
             },
             onDelete: 'RESTRICT',
         })
+        Drink.hasMany(models.User, {
+            foreignKey: {
+                name: 'drinkId',
+                allowNull: true,
+            },
+            onDelete: 'RESTRICT',
+        })
     }
     return Drink
 }
