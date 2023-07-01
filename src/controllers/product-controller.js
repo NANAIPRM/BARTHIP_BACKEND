@@ -1,6 +1,6 @@
 const createError = require('../utils/create-error')
 const uploadService = require('../services/upload-service')
-const { Avatar, Drink, Hat } = require('../models')
+const { Avatar, Drink, Hat, UserHat, User } = require('../models')
 
 // ADD PRODUCT
 exports.AddAvatar = async (req, res, next) => {
@@ -289,3 +289,36 @@ exports.GetDrinkById = async (req, res, next) => {
         next(err)
     }
 }
+
+// AddProductToCart ไปเอาuserIdจากtokenหน้าบ้าน
+
+exports.AddHatByUserId = (req, res, next) => {
+    const { hatId } = req.body
+    UserHat.create({
+        hatId,
+        userId:1
+    }).then(rs=>{
+        res.json(rs)
+    }).catch(next)
+}
+
+exports.AddDrinkByUserId = (req, res, next) => {
+    const { drinkId } = req.body
+    UserDrink.create({
+        drinkId,
+        userId:1
+    }).then(rs=>{
+        res.json(rs)
+    }).catch(next)
+}
+
+exports.AddAvatarByUserId = (req, res, next) => {
+    const { avatarId } = req.body
+    UserAvatar.create({
+        avatarId,
+        userId:1
+    }).then(rs=>{
+        res.json(rs)
+    }).catch(next)
+}
+

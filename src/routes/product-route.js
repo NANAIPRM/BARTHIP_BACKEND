@@ -2,6 +2,7 @@ const express = require('express')
 const productController = require('../controllers/product-controller')
 const upload = require('../middlewares/upload')
 const router = express.Router()
+const authenticate = require('./../middlewares/authenticate')
 
 // Add Product
 router.post('/avatar', upload.single('image'), productController.AddAvatar)
@@ -31,5 +32,11 @@ router.get('/drink', productController.GetAllDrinks)
 router.get('/avatar/:id', productController.GetAvatarById)
 router.get('/hat/:id', productController.GetHatById)
 router.get('/drink/:id', productController.GetDrinkById)
+
+// ADD userProduct 
+router.post('/userHat', productController.AddHatByUserId)
+router.post('/avatarHat', productController.AddAvatarByUserId)
+router.post('/drinkHat', productController.AddDrinkByUserId)
+
 
 module.exports = router
