@@ -34,9 +34,11 @@ router.get('/hat/:id', productController.GetHatById)
 router.get('/drink/:id', productController.GetDrinkById)
 
 // ADD userProduct 
-router.post('/userHat', productController.AddHatByUserId)
-router.post('/avatarHat', productController.AddAvatarByUserId)
-router.post('/drinkHat', productController.AddDrinkByUserId)
+router.post('/userHat',authenticate, productController.AddHatByUserId)
+router.post('/userAvatar',authenticate, productController.AddAvatarByUserId)
+router.post('/userDrink',authenticate, productController.AddDrinkByUserId)
+
+
 
 
 module.exports = router

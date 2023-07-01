@@ -11,7 +11,7 @@ const io = new Server(server, {
 
 let roomOccupancy = {}
 const joinedRooms = []
-console.log('----', joinedRooms)
+console.log('5555555555555555555555555', joinedRooms)
 const onlineUser = {}
 
 io.use((socket, next) => {

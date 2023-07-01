@@ -214,33 +214,33 @@ exports.DeleteDrink = async (req, res, next) => {
 
 // GET ALL Product
 
-exports.GetAllAvatars = async (req, res, next) => {
-    try {
-        const avatars = await Avatar.findAll()
+// exports.GetAllAvatars = async (req, res, next) => {
+//     try {
+//         const avatars = await Avatar.findAll()
 
-        res.status(200).json({ avatars })
-    } catch (err) {
-        next(err)
-    }
-}
-exports.GetAllHats = async (req, res, next) => {
-    try {
-        const hats = await Hat.findAll()
+//         res.status(200).json({ avatars })
+//     } catch (err) {
+//         next(err)
+//     }
+// }
+// exports.GetAllHats = async (req, res, next) => {
+//     try {
+//         const hats = await Hat.findAll()
 
-        res.status(200).json({ hats })
-    } catch (err) {
-        next(err)
-    }
-}
-exports.GetAllDrinks = async (req, res, next) => {
-    try {
-        const drinks = await Drink.findAll()
+//         res.status(200).json({ hats })
+//     } catch (err) {
+//         next(err)
+//     }
+// }
+// exports.GetAllDrinks = async (req, res, next) => {
+//     try {
+//         const drinks = await Drink.findAll()
 
-        res.status(200).json({ drinks })
-    } catch (err) {
-        next(err)
-    }
-}
+//         res.status(200).json({ drinks })
+//     } catch (err) {
+//         next(err)
+//     }
+// }
 
 // GET Product By ProductId
 
@@ -290,14 +290,15 @@ exports.GetDrinkById = async (req, res, next) => {
     }
 }
 
-// AddProductToCart ไปเอาuserIdจากtokenหน้าบ้าน
+// AddProductToCart 
 
 exports.AddHatByUserId = (req, res, next) => {
+
     const { hatId } = req.body
     UserHat.create({
         hatId,
-        userId:1
-    }).then(rs=>{
+        userId: req.user.id
+    }).then(rs => {
         res.json(rs)
     }).catch(next)
 }
@@ -306,8 +307,8 @@ exports.AddDrinkByUserId = (req, res, next) => {
     const { drinkId } = req.body
     UserDrink.create({
         drinkId,
-        userId:1
-    }).then(rs=>{
+        userId: req.user.id
+    }).then(rs => {
         res.json(rs)
     }).catch(next)
 }
@@ -316,9 +317,40 @@ exports.AddAvatarByUserId = (req, res, next) => {
     const { avatarId } = req.body
     UserAvatar.create({
         avatarId,
-        userId:1
+        userId: req.user.id
+    }).then(rs => {
+        res.json(rs)
+    }).catch(next)
+}
+
+// Get All Product
+
+exports.GetAllHats = (req, res, next) => {
+    Hat.findAll({
+        include: [{
+            model: UserHat, attributes: ["userId"]
+        }]
     }).then(rs=>{
         res.json(rs)
     }).catch(next)
 }
 
+exports.GetAllDrinks = (req, res, next) => {
+    Drink.findAll({
+        include: [{
+            model: UserDrink, attributes: ["userId"]
+        }]
+    }).then(rs=>{
+        res.json(rs)
+    }).catch(next)
+}
+
+exports.GetAllAvatars = (req, res, next) => {
+    Avatar.findAll({
+        include: [{
+            model: UserAvatar, attributes: ["userId"]
+        }]
+    }).then(rs=>{
+        res.json(rs)
+    }).catch(next)
+}
