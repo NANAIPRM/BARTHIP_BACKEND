@@ -5,7 +5,7 @@ const {
 const bcryptService = require('../services/bcrypt-service')
 const tokenService = require('../services/token-service')
 const createError = require('../utils/create-error')
-const { User } = require('../models')
+const { User, UserDrink } = require('../models')
 
 exports.getMe = (req, res, next) => {
     res.status(200).json({ user: req.user })
@@ -36,6 +36,15 @@ exports.register = async (req, res, next) => {
             email: value.email,
             password: value.password,
         })
+
+        // await Promise.all(
+        //     Array.from({ length: 6 }, (_, index) =>
+        //         UserDrink.create({
+        //             userId: user.id,
+        //             drinkId: index + 2,
+        //         })
+        //     )
+        // )
 
         // Sign token and send response
         const accessToken = tokenService.sign({ id: user.id })

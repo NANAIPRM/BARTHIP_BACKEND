@@ -2,9 +2,8 @@ module.exports = (sequelize, DataTypes) => {
     const Payment = sequelize.define(
         'Payment',
         {
-            transactionId: DataTypes.INTEGER,
-            paymentAt: DataTypes.STRING,
-            totalPrice: DataTypes.INTEGER,
+            emailUser: DataTypes.STRING,
+            paymentStatus: DataTypes.STRING,
         },
         {
             underscored: true,

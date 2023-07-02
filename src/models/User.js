@@ -54,6 +54,27 @@ module.exports = (sequelize, DataTypes) => {
             },
             onDelete: 'RESTRICT',
         })
+        User.belongsTo(models.Avatar, {
+            foreignKey: {
+                name: 'avatarId',
+                allowNull: true,
+            },
+            onDelete: 'RESTRICT',
+        })
+        User.belongsTo(models.Drink, {
+            foreignKey: {
+                name: 'drinkId',
+                allowNull: true,
+            },
+            onDelete: 'RESTRICT',
+        })
+        User.belongsTo(models.Hat, {
+            foreignKey: {
+                name: 'hatId',
+                allowNull: true,
+            },
+            onDelete: 'RESTRICT',
+        })
     }
     return User
 }

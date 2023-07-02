@@ -3,9 +3,10 @@ module.exports = (sequelize, DataTypes) => {
         'Avatar',
         {
             name: DataTypes.STRING,
+            description: DataTypes.STRING,
             image: DataTypes.STRING,
             price: DataTypes.INTEGER,
-            description: DataTypes.STRING
+            apiId: DataTypes.STRING,
         },
         {
             underscored: true,
@@ -24,6 +25,14 @@ module.exports = (sequelize, DataTypes) => {
         Avatar.hasMany(models.Order, {
             foreignKey: {
                 name: 'avatarId',
+            },
+            onDelete: 'RESTRICT',
+        })
+
+        Avatar.hasMany(models.User, {
+            foreignKey: {
+                name: 'avatarId',
+                allowNull: true,
             },
             onDelete: 'RESTRICT',
         })
