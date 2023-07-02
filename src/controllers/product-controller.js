@@ -292,37 +292,45 @@ exports.GetDrinkById = async (req, res, next) => {
 
 // AddProductToCart 
 
-exports.AddHatByUserId = (req, res, next) => {
 
-    const { hatId } = req.body
-    UserHat.create({
-        hatId,
-        userId: req.user.id
-    }).then(rs => {
-        res.json(rs)
-    }).catch(next)
-}
+exports.AddHatByUserId = async (req, res, next) => {
+    try {
+        const { hatId } = req.body;
+        const rs = await UserHat.create({
+            hatId,
+            userId: req.user.id
+        });
+        res.json(rs);
+    } catch (error) {
+        next(error);
+    }
+};
 
-exports.AddDrinkByUserId = (req, res, next) => {
-    const { drinkId } = req.body
-    UserDrink.create({
-        drinkId,
-        userId: req.user.id
-    }).then(rs => {
-        res.json(rs)
-    }).catch(next)
-}
+exports.AddDrinkByUserId = async (req, res, next) => {
+    try {
+        const { drinkId } = req.body;
+        const rs = await UserDrink.create({
+            drinkId,
+            userId: req.user.id
+        });
+        res.json(rs);
+    } catch (error) {
+        next(error);
+    }
+};
 
-exports.AddAvatarByUserId = (req, res, next) => {
-    const { avatarId } = req.body
-    UserAvatar.create({
-        avatarId,
-        userId: req.user.id
-    }).then(rs => {
-        res.json(rs)
-    }).catch(next)
-}
-
+exports.AddAvatarByUserId = async (req, res, next) => {
+    try {
+        const { avatarId } = req.body;
+        const rs = await UserAvatar.create({
+            avatarId,
+            userId: req.user.id
+        });
+        res.json(rs);
+    } catch (error) {
+        next(error);
+    }
+};
 // Get All Product
 
 exports.GetAllHats = (req, res, next) => {
