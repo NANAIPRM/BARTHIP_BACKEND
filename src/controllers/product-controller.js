@@ -1,6 +1,6 @@
 const createError = require('../utils/create-error')
 const uploadService = require('../services/upload-service')
-const { Avatar, Drink, Hat, UserHat, UserAvatar, UserDrink } = require('../models')
+const { Avatar, Drink, Hat, UserHat, UserAvatar, UserDrink, Order, Payment } = require('../models')
 
 // ADD PRODUCT
 exports.AddAvatar = async (req, res, next) => {
@@ -212,36 +212,6 @@ exports.DeleteDrink = async (req, res, next) => {
     }
 }
 
-// GET ALL Product
-
-// exports.GetAllAvatars = async (req, res, next) => {
-//     try {
-//         const avatars = await Avatar.findAll()
-
-//         res.status(200).json({ avatars })
-//     } catch (err) {
-//         next(err)
-//     }
-// }
-// exports.GetAllHats = async (req, res, next) => {
-//     try {
-//         const hats = await Hat.findAll()
-
-//         res.status(200).json({ hats })
-//     } catch (err) {
-//         next(err)
-//     }
-// }
-// exports.GetAllDrinks = async (req, res, next) => {
-//     try {
-//         const drinks = await Drink.findAll()
-
-//         res.status(200).json({ drinks })
-//     } catch (err) {
-//         next(err)
-//     }
-// }
-
 // GET Product By ProductId
 
 exports.GetAvatarById = async (req, res, next) => {
@@ -290,47 +260,6 @@ exports.GetDrinkById = async (req, res, next) => {
     }
 }
 
-// AddProductToCart 
-
-
-exports.AddHatByUserId = async (req, res, next) => {
-    try {
-        const { hatId } = req.body;
-        const rs = await UserHat.create({
-            hatId,
-            userId: req.user.id
-        });
-        res.json(rs);
-    } catch (error) {
-        next(error);
-    }
-};
-
-exports.AddDrinkByUserId = async (req, res, next) => {
-    try {
-        const { drinkId } = req.body;
-        const rs = await UserDrink.create({
-            drinkId,
-            userId: req.user.id
-        });
-        res.json(rs);
-    } catch (error) {
-        next(error);
-    }
-};
-
-exports.AddAvatarByUserId = async (req, res, next) => {
-    try {
-        const { avatarId } = req.body;
-        const rs = await UserAvatar.create({
-            avatarId,
-            userId: req.user.id
-        });
-        res.json(rs);
-    } catch (error) {
-        next(error);
-    }
-};
 // Get All Product
 
 exports.GetAllHats = (req, res, next) => {
@@ -338,7 +267,7 @@ exports.GetAllHats = (req, res, next) => {
         include: [{
             model: UserHat, attributes: ["userId"]
         }]
-    }).then(rs=>{
+    }).then(rs => {
         res.json(rs)
     }).catch(next)
 }
@@ -348,7 +277,7 @@ exports.GetAllDrinks = (req, res, next) => {
         include: [{
             model: UserDrink, attributes: ["userId"]
         }]
-    }).then(rs=>{
+    }).then(rs => {
         res.json(rs)
     }).catch(next)
 }
@@ -358,7 +287,84 @@ exports.GetAllAvatars = (req, res, next) => {
         include: [{
             model: UserAvatar, attributes: ["userId"]
         }]
-    }).then(rs=>{
+    }).then(rs => {
         res.json(rs)
     }).catch(next)
 }
+
+//Add Order
+exports.AddOrderHat = (req, res, next) => {
+    const { status, hatId, drinkId, avatarId } = req.body
+    Payment.create({
+        emailUser: req.user.email,
+        paymentStatus: status
+    }).then( rs => {
+        Order.create({
+            paymentId: rs.id,
+            userId: req.user.id,
+            hatId: hatId || null,
+            drinkId: drinkId || null,
+            avatarId: avatarId || null
+        })
+    }).then(() => {
+        if (status == "Paid") {
+            UserHat.create({
+                hatId,
+                userId: req.user.id
+            })
+        } else { console.log("จนก็ไม่ต้องซื้อ") }
+    }).then( rs => {
+        res.json(rs)
+    }).catch(next)
+}
+
+exports.AddOrderDrink = (req, res, next) => {
+    const { status, hatId, drinkId, avatarId } = req.body
+    Payment.create({
+        emailUser: req.user.email,
+        paymentStatus: status
+    }).then( rs => {
+        Order.create({
+            paymentId: rs.id,
+            userId: req.user.id,
+            hatId: hatId || null,
+            drinkId: drinkId || null,
+            avatarId: avatarId || null
+        })
+    }).then(() => {
+        if (status == "Paid") {
+            UserDrink.create({
+                hatId,
+                userId: req.user.id
+            })
+        } else { console.log("จนก็ไม่ต้องซื้อ") }
+    }).then( rs => {
+        res.json(rs)
+    }).catch(next)
+}
+
+exports.AddOrderAvatar = (req, res, next) => {
+    const { status, hatId, drinkId, avatarId } = req.body
+    Payment.create({
+        emailUser: req.user.email,
+        paymentStatus: status
+    }).then( rs => {
+        Order.create({
+            paymentId: rs.id,
+            userId: req.user.id,
+            hatId: hatId || null,
+            drinkId: drinkId || null,
+            avatarId: avatarId || null
+        })
+    }).then(() => {
+        if (status == "Paid") {
+            UserAvatar.create({
+                hatId,
+                userId: req.user.id
+            })
+        } else { console.log("จนก็ไม่ต้องซื้อ") }
+    }).then( rs => {
+        res.json(rs)
+    }).catch(next)
+}
+

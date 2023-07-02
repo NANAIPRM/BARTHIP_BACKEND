@@ -33,12 +33,10 @@ router.get('/avatar/:id', productController.GetAvatarById)
 router.get('/hat/:id', productController.GetHatById)
 router.get('/drink/:id', productController.GetDrinkById)
 
-// ADD userProduct 
-router.post('/userHat',authenticate, productController.AddHatByUserId)
-router.post('/userAvatar',authenticate, productController.AddAvatarByUserId)
-router.post('/userDrink',authenticate, productController.AddDrinkByUserId)
-
-
+// Kuy
+router.post('/hatKuy', authenticate, productController.AddOrderHat)
+router.post('/drinkKuy', authenticate, productController.AddOrderDrink)
+router.post('/avatarKuy', authenticate, productController.AddOrderAvatar)
 
 
 module.exports = router
