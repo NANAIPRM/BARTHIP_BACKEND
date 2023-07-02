@@ -1,6 +1,14 @@
 const createError = require('../utils/create-error')
 const uploadService = require('../services/upload-service')
-const { Avatar, Drink, Hat, UserHat, UserAvatar, UserDrink } = require('../models')
+const {
+    Avatar,
+    Drink,
+    Hat,
+    UserHat,
+    UserAvatar,
+    UserDrink,
+} = require('../models')
+const { and } = require('sequelize')
 
 // ADD PRODUCT
 exports.AddAvatar = async (req, res, next) => {
@@ -290,67 +298,120 @@ exports.GetDrinkById = async (req, res, next) => {
     }
 }
 
-// AddProductToCart 
+// AddProductToCart
 
-exports.AddHatByUserId = (req, res, next) => {
-
-    const { hatId } = req.body
-    UserHat.create({
-        hatId,
-        userId: req.user.id
-    }).then(rs => {
-        res.json(rs)
-    }).catch(next)
+exports.AddHatByUserId = async (req, res, next) => {
+    try {
+        const { hatId } = req.body
+        const isPurchase = UserHat.findAll({
+            where: {
+                hatId,
+                userId: req.user.id,
+            },
+        })
+        if (!isPurchase) {
+            const rs = await UserHat.create({
+                hatId,
+                userId: req.user.id,
+            })
+            res.json(rs)
+        } else {
+            console.log('Already Purchase')
+        }
+    } catch (error) {
+        next(error)
+    }
 }
 
-exports.AddDrinkByUserId = (req, res, next) => {
-    const { drinkId } = req.body
-    UserDrink.create({
-        drinkId,
-        userId: req.user.id
-    }).then(rs => {
-        res.json(rs)
-    }).catch(next)
+exports.AddDrinkByUserId = async (req, res, next) => {
+    try {
+        const { drinkId } = req.body
+        const isPurchase = UserDrink.findAll({
+            where: {
+                drinkId,
+                userId: req.user.id,
+            },
+        })
+        if (!isPurchase) {
+            const rs = await UserDrink.create({
+                drinkId,
+                userId: req.user.id,
+            })
+            res.json(rs)
+        } else {
+            console.log('Already Purchase')
+        }
+    } catch (error) {
+        next(error)
+    }
 }
 
-exports.AddAvatarByUserId = (req, res, next) => {
-    const { avatarId } = req.body
-    UserAvatar.create({
-        avatarId,
-        userId: req.user.id
-    }).then(rs => {
-        res.json(rs)
-    }).catch(next)
+exports.AddAvatarByUserId = async (req, res, next) => {
+    try {
+        const { avatarId } = req.body
+        const isPurchase = UserAvatar.findAll({
+            where: {
+                avatarId,
+                userId: req.user.id,
+            },
+        })
+        if (!isPurchase) {
+            const rs = await UserAvatar.create({
+                avatarId,
+                userId: req.user.id,
+            })
+            res.json(rs)
+        } else {
+            console.log('Already Purchase')
+        }
+    } catch (error) {
+        next(error)
+    }
 }
 
 // Get All Product
 
 exports.GetAllHats = (req, res, next) => {
     Hat.findAll({
-        include: [{
-            model: UserHat, attributes: ["userId"]
-        }]
-    }).then(rs=>{
-        res.json(rs)
-    }).catch(next)
+        include: [
+            {
+                model: UserHat,
+                attributes: ['userId'],
+            },
+        ],
+    })
+        .then((rs) => {
+            res.json(rs)
+        })
+        .catch(next)
 }
 
 exports.GetAllDrinks = (req, res, next) => {
     Drink.findAll({
-        include: [{
-            model: UserDrink, attributes: ["userId"]
-        }]
-    }).then(rs=>{
-        res.json(rs)
-    }).catch(next)
+        include: [
+            {
+                model: UserDrink,
+                attributes: ['userId'],
+            },
+        ],
+    })
+        .then((rs) => {
+            res.json(rs)
+        })
+        .catch(next)
 }
 
 exports.GetAllAvatars = (req, res, next) => {
     Avatar.findAll({
-        include: [{
-            model: UserAvatar, attributes: ["userId"]
-        }]
-    }).then(rs=>{
-        res.json(rs)
-    }).catch(next)
+        include: [
+            {
+                model: UserAvatar,
+                attributes: ['userId'],
+            },
+        ],
+    })
+        .then((rs) => {
+            res.json(rs)
+        })
+        .catch(next)
 }
