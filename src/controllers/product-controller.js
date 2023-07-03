@@ -395,3 +395,41 @@ exports.UpdateAvatarByUserId = async (req, res, next) => {
         next(err)
     }
 }
+
+exports.GetFullAvatarByUserId = async (req, res, next) => {
+    try {
+        const id = req.user.id
+
+        const user = await User.findAll({
+            where: { id },
+            include: [Avatar, Hat, Drink],
+        })
+
+        if (!user) {
+            throw createError(404, 'User not found')
+        }
+
+        res.status(200).json({ user })
+    } catch (err) {
+        next(err)
+    }
+}
+
+exports.GetFullAvatarByUserOnlineId = async (req, res, next) => {
+    try {
+        const { id } = req.body
+
+        const user = await User.findOne({
+            where: { id },
+            include: [Avatar, Hat, Drink],
+        })
+
+        if (!user) {
+            throw createError(404, 'User not found')
+        }
+
+        res.status(200).json({ user })
+    } catch (err) {
+        next(err)
+    }
+}

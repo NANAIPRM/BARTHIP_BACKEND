@@ -58,3 +58,11 @@ router.patch(
 )
 
 module.exports = router
+
+router.get(
+    '/meAvatar',
+    authenticateMiddleware,
+    productController.GetFullAvatarByUserId
+)
+
+router.post('/meAvatar', productController.GetFullAvatarByUserOnlineId)

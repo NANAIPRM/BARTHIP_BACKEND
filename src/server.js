@@ -11,26 +11,27 @@ const io = new Server(server, {
 
 let roomOccupancy = {}
 const joinedRooms = []
-console.log('----', joinedRooms)
+// console.log('----', joinedRooms)
 const onlineUser = {}
+const onlineUserRooms = {}
 
 io.use((socket, next) => {
     const userId = socket.handshake.auth.id
-    console.log(socket.id)
-    console.log(userId)
+    // console.log(socket.id)
+    // console.log(userId)
     if (!userId) {
-        console.log('error connect')
+        // console.log('error connect')
         return next(new Error('invalid username'))
     }
     socket.userId = userId
     onlineUser[userId] = socket.id
-    console.log(onlineUser)
-    console.log(`User connected ${socket.id}`)
+    // console.log(onlineUser)
+    // console.log(`User connected ${socket.id}`)
     next()
 })
 
 io.on('connection', (socket) => {
-    console.log(onlineUser)
+    // console.log(onlineUser)
     io.emit('onlinefriends', onlineUser)
     socket.on('room', (data) => {
         const room = data
@@ -38,8 +39,18 @@ io.on('connection', (socket) => {
 
         if (occupants < 2) {
             socket.join(room)
+            if (onlineUserRooms[room]) {
+                onlineUserRooms[room].push(socket.userId)
+            } else {
+                onlineUserRooms[room] = [socket.userId]
+            }
             roomOccupancy[room] = occupants + 1
-            socket.emit('roomJoined', { room, occupants: occupants + 1 })
+
+            io.in(room).emit('roomJoined', {
+                room: room,
+                occupants: occupants + 1,
+                onlineUserRoom: onlineUserRooms[room],
+            })
             if (!joinedRooms.includes(room)) {
                 joinedRooms.push(room)
             }
@@ -56,28 +67,52 @@ io.on('connection', (socket) => {
         const room = vacantRooms[randomIndex]
         const occupants = roomOccupancy[room] || 0
         roomOccupancy[room] += 1
+        if (onlineUserRooms[room]) {
+            onlineUserRooms[room].push(socket.userId)
+        } else {
+            onlineUserRooms[room] = [socket.id]
+        }
+        // console.log('-----------Room', socket.userId, onlineUserRooms)
+        roomOccupancy[room] += 1
+        // console.log('-------', roomOccupancy[room])
         socket.join(room)
-        socket.emit('roomJoined', { room: room, occupants: occupants + 1 })
+        io.in(room).emit('roomJoined', {
+            room: room,
+            occupants: occupants + 1,
+            onlineUserRoom: onlineUserRooms[room],
+        })
     })
-
+    // socket.on('userJoined', (room) => {
+    //     if (onlineUserRooms[room]) {
+    //         onlineUserRooms[room].push(socket.userId)
+    //     } else {
+    //         onlineUserRooms[room] = [socket.id]
+    //     }
+    //     console.log('-----------Room', socket.userId, onlineUserRooms)
+    // })
     socket.on('message', (data) => {
-        console.log(data)
+        // console.log(data)
         socket.to(data.room).emit('messageReturn', data)
     })
 
     socket.on('leaveRoom', (room) => {
         roomOccupancy[room] -= 1
-        console.log(roomOccupancy[room])
-        console.log(joinedRooms)
+        console.log('---------', roomOccupancy[room])
+        // console.log(joinedRooms)
+
+        if (onlineUserRooms[room]) {
+            const index = onlineUserRooms[room].indexOf(socket.userId)
+            if (index > -1) {
+                onlineUserRooms[room].splice(index, 1)
+            }
+        }
+
         if (roomOccupancy[room] <= 0) {
             const index = joinedRooms.indexOf(room)
             if (index > -1) {
                 joinedRooms.splice(index, 1)
             }
         }
-        console.log(joinedRooms)
-        // console.log(roomOccupancy[room])
-        // console.log(joinedRooms)
     })
 
     socket.on('disconnect', () => {
@@ -89,9 +124,9 @@ io.on('connection', (socket) => {
             }
         }
         delete onlineUser[socket.userId]
-        console.log(onlineUser)
+        // console.log(onlineUser)
         io.emit('onlinefriends', onlineUser)
-        console.log('User Disconnected', socket.id, socket.userId, 'userId')
+        // console.log('User Disconnected', socket.id, socket.userId, 'userId')
     })
 })
 
