@@ -13,7 +13,7 @@ module.exports = (sequelize, DataTypes) => {
         Order.belongsTo(models.Payment, {
             foreignKey: {
                 name: 'paymentId',
-                allowNull: false,
+                allowNull: true,
             },
             onDelete: 'RESTRICT',
         })
@@ -21,6 +21,7 @@ module.exports = (sequelize, DataTypes) => {
         Order.belongsTo(models.Avatar, {
             foreignKey: {
                 name: 'avatarId',
+                allowNull: true
             },
             onDelete: 'RESTRICT',
         })
@@ -28,6 +29,7 @@ module.exports = (sequelize, DataTypes) => {
         Order.belongsTo(models.Hat, {
             foreignKey: {
                 name: 'hatId',
+                allowNull: true
             },
             onDelete: 'RESTRICT',
         })
@@ -35,6 +37,7 @@ module.exports = (sequelize, DataTypes) => {
         Order.belongsTo(models.Drink, {
             foreignKey: {
                 name: 'drinkId',
+                allowNull: true
             },
             onDelete: 'RESTRICT',
         })

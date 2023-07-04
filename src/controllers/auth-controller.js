@@ -57,7 +57,7 @@ exports.register = async (req, res, next) => {
 exports.login = async (req, res, next) => {
     try {
         const value = validateLogin(req.body)
-        const user = await await User.findOne({
+        const user = await User.findOne({
             where: {
                 email: value.email,
             },

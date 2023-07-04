@@ -4,16 +4,17 @@ const {
     Avatar,
     Drink,
     Hat,
-    UserDrink,
     UserHat,
     UserAvatar,
-    User,
+    UserDrink,
+    Order,
+    Payment,
 } = require('../models')
 
 // ADD PRODUCT
 exports.AddAvatar = async (req, res, next) => {
     try {
-        const { name, price, description } = req.body
+        const { name, price } = req.body
         const image = await (
             await uploadService.upload(req.file.path)
         ).secure_url
@@ -22,7 +23,6 @@ exports.AddAvatar = async (req, res, next) => {
             name,
             image,
             price,
-            description,
         })
 
         res.status(200).json({ product: createdAvatar })
@@ -32,7 +32,7 @@ exports.AddAvatar = async (req, res, next) => {
 }
 exports.AddDrink = async (req, res, next) => {
     try {
-        const { name, price, description } = req.body
+        const { name, price } = req.body
         const image = await (
             await uploadService.upload(req.file.path)
         ).secure_url
@@ -41,7 +41,6 @@ exports.AddDrink = async (req, res, next) => {
             name,
             image,
             price,
-            description,
         })
 
         res.status(200).json({ product: createdDrink })
@@ -51,7 +50,7 @@ exports.AddDrink = async (req, res, next) => {
 }
 exports.AddHat = async (req, res, next) => {
     try {
-        const { name, price, description } = req.body
+        const { name, price } = req.body
         const image = await (
             await uploadService.upload(req.file.path)
         ).secure_url
@@ -60,7 +59,6 @@ exports.AddHat = async (req, res, next) => {
             name,
             image,
             price,
-            description,
         })
 
         res.status(200).json({ product: createdHat })
@@ -73,7 +71,7 @@ exports.AddHat = async (req, res, next) => {
 exports.EditAvatar = async (req, res, next) => {
     try {
         const { id } = req.params
-        const { name, price, description } = req.body
+        const { name, price } = req.body
 
         const image = req.file
             ? (await uploadService.upload(req.file.path)).secure_url
@@ -88,9 +86,6 @@ exports.EditAvatar = async (req, res, next) => {
         }
         if (image) {
             updateData.image = image
-        }
-        if (description) {
-            updateData.description = description
         }
 
         await Avatar.update(updateData, {
@@ -111,7 +106,7 @@ exports.EditAvatar = async (req, res, next) => {
 exports.EditHat = async (req, res, next) => {
     try {
         const { id } = req.params
-        const { name, price, description } = req.body
+        const { name, price } = req.body
 
         const image = req.file
             ? (await uploadService.upload(req.file.path)).secure_url
@@ -126,9 +121,6 @@ exports.EditHat = async (req, res, next) => {
         }
         if (image) {
             updateData.image = image
-        }
-        if (description) {
-            updateData.description = description
         }
 
         await Hat.update(updateData, {
@@ -149,7 +141,7 @@ exports.EditHat = async (req, res, next) => {
 exports.EditDrink = async (req, res, next) => {
     try {
         const { id } = req.params
-        const { name, price, description } = req.body
+        const { name, price } = req.body
 
         const image = req.file
             ? (await uploadService.upload(req.file.path)).secure_url
@@ -164,9 +156,6 @@ exports.EditDrink = async (req, res, next) => {
         }
         if (image) {
             updateData.image = image
-        }
-        if (description) {
-            updateData.description = description
         }
 
         await Drink.update(updateData, {
@@ -190,7 +179,7 @@ exports.DeleteAvatar = async (req, res, next) => {
     try {
         const { id } = req.params
 
-        const deletedAvatar = await Avatar.destroy({ where: { id } })
+        const deletedAvatar = await Avatar.destroy({ where: { id: id } })
 
         if (deletedAvatar === 0) {
             throw createError(404, 'Avatar not found')
@@ -203,9 +192,9 @@ exports.DeleteAvatar = async (req, res, next) => {
 }
 exports.DeleteHat = async (req, res, next) => {
     try {
-        const { id } = req.params
+        const { hatId } = req.params
 
-        const deletedHat = await Hat.destroy({ where: { id } })
+        const deletedHat = await Hat.destroy({ where: { id: hatId } })
 
         if (deletedHat === 0) {
             throw createError(404, 'Hat not found')
@@ -218,9 +207,9 @@ exports.DeleteHat = async (req, res, next) => {
 }
 exports.DeleteDrink = async (req, res, next) => {
     try {
-        const { id } = req.params
+        const { drinkId } = req.params
 
-        const deletedDrink = await Drink.destroy({ where: { id } })
+        const deletedDrink = await Drink.destroy({ where: { id: drinkId } })
 
         if (deletedDrink === 0) {
             throw createError(404, 'Drink not found')
@@ -232,43 +221,13 @@ exports.DeleteDrink = async (req, res, next) => {
     }
 }
 
-// GET ALL Product
-
-exports.GetAllAvatars = async (req, res, next) => {
-    try {
-        const avatars = await Avatar.findAll()
-
-        res.status(200).json({ avatars })
-    } catch (err) {
-        next(err)
-    }
-}
-exports.GetAllHats = async (req, res, next) => {
-    try {
-        const hats = await Hat.findAll()
-
-        res.status(200).json({ hats })
-    } catch (err) {
-        next(err)
-    }
-}
-exports.GetAllDrinks = async (req, res, next) => {
-    try {
-        const drinks = await Drink.findAll()
-
-        res.status(200).json({ drinks })
-    } catch (err) {
-        next(err)
-    }
-}
-
 // GET Product By ProductId
 
 exports.GetAvatarById = async (req, res, next) => {
     try {
-        const { id } = req.params
+        const { avatarId } = req.params
 
-        const avatar = await Avatar.findOne({ where: { id } })
+        const avatar = await Avatar.findByPk(avatarId)
 
         if (!avatar) {
             throw createError(404, 'Avatar not found')
@@ -281,9 +240,9 @@ exports.GetAvatarById = async (req, res, next) => {
 }
 exports.GetHatById = async (req, res, next) => {
     try {
-        const { id } = req.params
+        const { hatId } = req.params
 
-        const hat = await Hat.findOne({ where: { id } })
+        const hat = await Hat.findByPk(hatId)
 
         if (!hat) {
             throw createError(404, 'Hat not found')
@@ -296,9 +255,9 @@ exports.GetHatById = async (req, res, next) => {
 }
 exports.GetDrinkById = async (req, res, next) => {
     try {
-        const { id } = req.params
+        const { drinkId } = req.params
 
-        const drink = await Drink.findOne({ where: { id } })
+        const drink = await Drink.findByPk(drinkId)
 
         if (!drink) {
             throw createError(404, 'Drink not found')
@@ -310,90 +269,145 @@ exports.GetDrinkById = async (req, res, next) => {
     }
 }
 
-// GET DRINK BY USERID
+// Get All Product
 
-exports.GetAllDrinkByUserId = async (req, res, next) => {
-    try {
-        const id = req.user.id
-
-        const drinks = await UserDrink.findAll({
-            where: { userId: id },
-            include: Drink,
-        })
-
-        if (!drinks) {
-            throw createError(404, 'Drink not found')
-        }
-
-        res.status(200).json({ drinks })
-    } catch (err) {
-        next(err)
-    }
-}
-
-exports.GetAllHatByUserId = async (req, res, next) => {
-    try {
-        const id = req.user.id
-
-        const hats = await UserHat.findAll({
-            where: { userId: id },
-            include: Hat,
-        })
-
-        if (!hats) {
-            throw createError(404, 'Hat not found')
-        }
-
-        res.status(200).json({ hats })
-    } catch (err) {
-        next(err)
-    }
-}
-
-exports.GetAllAvatarByUserId = async (req, res, next) => {
-    try {
-        const id = req.user.id
-
-        const avatars = await UserAvatar.findAll({
-            where: { userId: id },
-            include: Avatar,
-        })
-
-        if (!avatars) {
-            throw createError(404, 'Avatar not found')
-        }
-
-        res.status(200).json({ avatars })
-    } catch (err) {
-        next(err)
-    }
-}
-
-exports.UpdateAvatarByUserId = async (req, res, next) => {
-    try {
-        const id = req.user.id
-        const { drinkId, hatId, avatarId } = req.body
-        console.log(id)
-
-        const [affectedRows] = await User.update(
+exports.GetAllHats = (req, res, next) => {
+    Hat.findAll({
+        include: [
             {
-                avatarId,
-                hatId,
-                drinkId,
+                model: UserHat,
+                attributes: ['userId'],
             },
+        ],
+    })
+        .then((rs) => {
+            res.json(rs)
+        })
+        .catch(next)
+}
+
+exports.GetAllDrinks = (req, res, next) => {
+    Drink.findAll({
+        include: [
             {
-                where: { id },
+                model: UserDrink,
+                attributes: ['userId'],
+            },
+        ],
+    })
+        .then((rs) => {
+            res.json(rs)
+        })
+        .catch(next)
+}
+
+exports.GetAllAvatars = (req, res, next) => {
+    Avatar.findAll({
+        include: [
+            {
+                model: UserAvatar,
+                attributes: ['userId'],
+            },
+        ],
+    })
+        .then((rs) => {
+            res.json(rs)
+        })
+        .catch(next)
+}
+
+//Add Order
+exports.AddOrderHat = (req, res, next) => {
+    const { status, hatId, drinkId, avatarId } = req.body
+    Payment.create({
+        emailUser: req.user.email,
+        paymentStatus: status,
+    })
+        .then((rs) => {
+            Order.create({
+                paymentId: rs.id,
+                userId: req.user.id,
+                hatId: hatId || null,
+                drinkId: drinkId || null,
+                avatarId: avatarId || null,
+            })
+        })
+        .then(() => {
+            if (status == 'Paid') {
+                UserHat.create({
+                    hatId,
+                    userId: req.user.id,
+                })
+            } else {
+                console.log('จนก็ไม่ต้องซื้อ')
             }
-        )
+        })
+        .then((rs) => {
+            res.json(rs)
+        })
+        .catch(next)
+}
 
-        if (affectedRows === 0) {
-            throw createError(404, 'User not found')
-        }
+exports.AddOrderDrink = (req, res, next) => {
+    const { status, hatId, drinkId, avatarId } = req.body
+    Payment.create({
+        emailUser: 'tae@mail.com',
+        paymentStatus: status,
+    })
+        .then((rs) => {
+            Order.create({
+                paymentId: rs.id,
+                userId: req.user.id,
+                hatId: hatId || null,
+                drinkId: drinkId || null,
+                avatarId: avatarId || null,
+            })
+        })
+        .then(() => {
+            if (status == 'paid') {
+                UserDrink.create({
+                    drinkId,
+                    userId: 2,
+                })
+            } else {
+                console.log('จนก็ไม่ต้องซื้อ')
+            }
+        })
+        .then((rs) => {
+            res.json(rs)
+        })
+        .catch(next)
+}
 
-        res.status(200).json({ message: 'User updated successfully' })
-    } catch (err) {
-        next(err)
-    }
+exports.AddOrderAvatar = (req, res, next) => {
+    const { status, hatId, drinkId, avatarId } = req.body
+    Payment.create({
+        emailUser: req.user.email,
+        paymentStatus: status,
+    })
+        .then((rs) => {
+            Order.create({
+                paymentId: rs.id,
+                userId: req.user.id,
+                hatId: hatId || null,
+                drinkId: drinkId || null,
+                avatarId: avatarId || null,
+            })
+        })
+        .then(() => {
+            if (status == 'Paid') {
+                UserAvatar.create({
+                    avatarId,
+                    userId: req.user.id,
+                })
+            } else {
+                console.log('จนก็ไม่ต้องซื้อ')
+            }
+        })
+        .then((rs) => {
+            res.json(rs)
+        })
+        .catch(next)
 }
 
 exports.GetFullAvatarByUserId = async (req, res, next) => {

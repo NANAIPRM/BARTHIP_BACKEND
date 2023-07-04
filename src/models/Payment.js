@@ -2,9 +2,8 @@ module.exports = (sequelize, DataTypes) => {
     const Payment = sequelize.define(
         'Payment',
         {
-            transactionId: DataTypes.INTEGER,
-            paymentAt: DataTypes.STRING,
-            totalPrice: DataTypes.INTEGER,
+            paymentStatus: DataTypes.STRING,
+            emailUser: DataTypes.STRING,
         },
         {
             underscored: true,
@@ -15,7 +14,7 @@ module.exports = (sequelize, DataTypes) => {
         Payment.hasOne(models.Order, {
             foreignKey: {
                 name: 'paymentId',
-                allowNull: false,
+                allowNull: true,
             },
             onDelete: 'RESTRICT',
         })
