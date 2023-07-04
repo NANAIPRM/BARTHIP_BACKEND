@@ -3,7 +3,9 @@ const stripe = require('stripe')(STRIPE_SECRET_KEY)
 const { Payment } = require('../models')
 
 exports.checkout = async (req, res, next) => {
+   
     try {
+    
         const data = await stripe.checkout.sessions.create({
             success_url:
                 'http://localhost:5173/thank?session_id={CHECKOUT_SESSION_ID}',

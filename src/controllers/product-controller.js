@@ -334,7 +334,7 @@ exports.AddOrderDrink = (req, res, next) => {
     }).then(() => {
         if (status == "Paid") {
             UserDrink.create({
-                hatId,
+                drinkId,
                 userId: req.user.id
             })
         } else { console.log("จนก็ไม่ต้องซื้อ") }
@@ -359,7 +359,7 @@ exports.AddOrderAvatar = (req, res, next) => {
     }).then(() => {
         if (status == "Paid") {
             UserAvatar.create({
-                hatId,
+                avatarId,
                 userId: req.user.id
             })
         } else { console.log("จนก็ไม่ต้องซื้อ") }
