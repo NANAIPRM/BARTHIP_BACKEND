@@ -42,4 +42,15 @@ router.get('/meAvatar', authenticate, productController.GetFullAvatarByUserId)
 
 router.post('/meAvatar', productController.GetFullAvatarByUserOnlineId)
 
+// GET Product By UserId
+router.get('/userDrink', authenticate, productController.GetAllDrinkByUserId)
+router.get('/userHat', authenticate, productController.GetAllHatByUserId)
+router.get('/userAvatar', authenticate, productController.GetAllAvatarByUserId)
+
+router.patch(
+    '/userAvatar',
+    authenticate,
+    productController.UpdateAvatarByUserId
+)
+
 module.exports = router

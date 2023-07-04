@@ -9,6 +9,7 @@ const {
     UserDrink,
     Order,
     Payment,
+    User,
 } = require('../models')
 
 // ADD PRODUCT
@@ -316,6 +317,92 @@ exports.GetAllAvatars = (req, res, next) => {
         .catch(next)
 }
 
+// GET DRINK BY USERID
+
+exports.GetAllDrinkByUserId = async (req, res, next) => {
+    try {
+        const id = req.user.id
+
+        const drinks = await UserDrink.findAll({
+            where: { userId: id },
+            include: Drink,
+        })
+
+        if (!drinks) {
+            throw createError(404, 'Drink not found')
+        }
+
+        res.status(200).json({ drinks })
+    } catch (err) {
+        next(err)
+    }
+}
+
+exports.GetAllHatByUserId = async (req, res, next) => {
+    try {
+        const id = req.user.id
+
+        const hats = await UserHat.findAll({
+            where: { userId: id },
+            include: Hat,
+        })
+
+        if (!hats) {
+            throw createError(404, 'Hat not found')
+        }
+
+        res.status(200).json({ hats })
+    } catch (err) {
+        next(err)
+    }
+}
+
+exports.UpdateAvatarByUserId = async (req, res, next) => {
+    try {
+        const id = req.user.id
+        const { drinkId, hatId, avatarId } = req.body
+        console.log(id)
+
+        const [affectedRows] = await User.update(
+            {
+                avatarId,
+                hatId,
+                drinkId,
+            },
+            {
+                where: { id },
+            }
+        )
+
+        if (affectedRows === 0) {
+            throw createError(404, 'User not found')
+        }
+
+        res.status(200).json({ message: 'User updated successfully' })
+    } catch (err) {
+        next(err)
+    }
+}
+
+exports.GetAllAvatarByUserId = async (req, res, next) => {
+    try {
+        const id = req.user.id
+
+        const avatars = await UserAvatar.findAll({
+            where: { userId: id },
+            include: Avatar,
+        })
+
+        if (!avatars) {
+            throw createError(404, 'Avatar not found')
+        }
+
+        res.status(200).json({ avatars })
+    } catch (err) {
+        next(err)
+    }
+}
+
 //Add Order
 exports.AddOrderHat = (req, res, next) => {
     const { status, hatId, drinkId, avatarId } = req.body
@@ -413,6 +500,7 @@ exports.AddOrderAvatar = (req, res, next) => {
 exports.GetFullAvatarByUserId = async (req, res, next) => {
     try {
         const id = req.user.id
+        console.log(id, '---------')
 
         const user = await User.findAll({
             where: { id },
