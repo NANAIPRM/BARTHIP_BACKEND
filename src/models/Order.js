@@ -13,7 +13,7 @@ module.exports = (sequelize, DataTypes) => {
         Order.belongsTo(models.Payment, {
             foreignKey: {
                 name: 'paymentId',
-                allowNull: false,
+                allowNull: true,
             },
             onDelete: 'RESTRICT',
         })

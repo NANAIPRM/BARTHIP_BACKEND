@@ -1,18 +1,11 @@
 const createError = require('../utils/create-error')
 const uploadService = require('../services/upload-service')
-const {
-    Avatar,
-    Drink,
-    Hat,
-    UserDrink,
-    UserHat,
-    UserAvatar,
-} = require('../models')
+const { Avatar, Drink, Hat, UserHat, UserAvatar, UserDrink, Order, Payment } = require('../models')
 
 // ADD PRODUCT
 exports.AddAvatar = async (req, res, next) => {
     try {
-        const { name, price, desciption } = req.body
+        const { name, price } = req.body
         const image = await (
             await uploadService.upload(req.file.path)
         ).secure_url
@@ -21,7 +14,6 @@ exports.AddAvatar = async (req, res, next) => {
             name,
             image,
             price,
-            desciption,
         })
 
         res.status(200).json({ product: createdAvatar })
@@ -31,7 +23,7 @@ exports.AddAvatar = async (req, res, next) => {
 }
 exports.AddDrink = async (req, res, next) => {
     try {
-        const { name, price, desciption } = req.body
+        const { name, price } = req.body
         const image = await (
             await uploadService.upload(req.file.path)
         ).secure_url
@@ -40,7 +32,6 @@ exports.AddDrink = async (req, res, next) => {
             name,
             image,
             price,
-            desciption,
         })
 
         res.status(200).json({ product: createdDrink })
@@ -50,7 +41,7 @@ exports.AddDrink = async (req, res, next) => {
 }
 exports.AddHat = async (req, res, next) => {
     try {
-        const { name, price, desciption } = req.body
+        const { name, price } = req.body
         const image = await (
             await uploadService.upload(req.file.path)
         ).secure_url
@@ -59,7 +50,6 @@ exports.AddHat = async (req, res, next) => {
             name,
             image,
             price,
-            desciption,
         })
 
         res.status(200).json({ product: createdHat })
@@ -222,36 +212,6 @@ exports.DeleteDrink = async (req, res, next) => {
     }
 }
 
-// GET ALL Product
-
-exports.GetAllAvatars = async (req, res, next) => {
-    try {
-        const avatars = await Avatar.findAll()
-
-        res.status(200).json({ avatars })
-    } catch (err) {
-        next(err)
-    }
-}
-exports.GetAllHats = async (req, res, next) => {
-    try {
-        const hats = await Hat.findAll()
-
-        res.status(200).json({ hats })
-    } catch (err) {
-        next(err)
-    }
-}
-exports.GetAllDrinks = async (req, res, next) => {
-    try {
-        const drinks = await Drink.findAll()
-
-        res.status(200).json({ drinks })
-    } catch (err) {
-        next(err)
-    }
-}
-
 // GET Product By ProductId
 
 exports.GetAvatarById = async (req, res, next) => {
@@ -300,61 +260,111 @@ exports.GetDrinkById = async (req, res, next) => {
     }
 }
 
-// GET DRINK BY USERID
+// Get All Product
 
-exports.GetAllDrinkByUserId = async (req, res, next) => {
-    try {
-        const id = req.user.id
-
-        const drinks = await UserDrink.findAll({
-            where: { userId: id },
-            include: Drink,
-        })
-
-        if (!drinks) {
-            throw createError(404, 'Drink not found')
-        }
-
-        res.status(200).json({ drinks })
-    } catch (err) {
-        next(err)
-    }
+exports.GetAllHats = (req, res, next) => {
+    Hat.findAll({
+        include: [{
+            model: UserHat, attributes: ["userId"]
+        }]
+    }).then(rs => {
+        res.json(rs)
+    }).catch(next)
 }
 
-exports.GetAllHatByUserId = async (req, res, next) => {
-    try {
-        const id = req.user.id
-
-        const hats = await UserHat.findAll({
-            where: { userId: id },
-            include: Hat,
-        })
-
-        if (!hats) {
-            throw createError(404, 'Hat not found')
-        }
-
-        res.status(200).json({ hats })
-    } catch (err) {
-        next(err)
-    }
+exports.GetAllDrinks = (req, res, next) => {
+    Drink.findAll({
+        include: [{
+            model: UserDrink, attributes: ["userId"]
+        }]
+    }).then(rs => {
+        res.json(rs)
+    }).catch(next)
 }
 
-exports.GetAllAvatarByUserId = async (req, res, next) => {
-    try {
-        const id = req.user.id
-
-        const avatars = await UserAvatar.findAll({
-            where: { userId: id },
-            include: Avatar,
-        })
-
-        if (!avatars) {
-            throw createError(404, 'Avatar not found')
-        }
-
-        res.status(200).json({ avatars })
-    } catch (err) {
-        next(err)
-    }
+exports.GetAllAvatars = (req, res, next) => {
+    Avatar.findAll({
+        include: [{
+            model: UserAvatar, attributes: ["userId"]
+        }]
+    }).then(rs => {
+        res.json(rs)
+    }).catch(next)
 }
+
+//Add Order
+exports.AddOrderHat = (req, res, next) => {
+    const { status, hatId, drinkId, avatarId } = req.body
+    Payment.create({
+        emailUser: req.user.email,
+        paymentStatus: status
+    }).then( rs => {
+        Order.create({
+            paymentId: rs.id,
+            userId: req.user.id,
+            hatId: hatId || null,
+            drinkId: drinkId || null,
+            avatarId: avatarId || null
+        })
+    }).then(() => {
+        if (status == "Paid") {
+            UserHat.create({
+                hatId,
+                userId: req.user.id
+            })
+        } else { console.log("จนก็ไม่ต้องซื้อ") }
+    }).then( rs => {
+        res.json(rs)
+    }).catch(next)
+}
+
+exports.AddOrderDrink = (req, res, next) => {
+    const { status, hatId, drinkId, avatarId } = req.body
+    Payment.create({
+        emailUser: "tae@mail.com",
+        paymentStatus: status
+    }).then( rs => {
+        Order.create({
+            paymentId: rs.id,
+            userId: req.user.id,
+            hatId: hatId || null,
+            drinkId: drinkId || null,
+            avatarId: avatarId || null
+        })
+    }).then(() => {
+        if (status == "paid") {
+            UserDrink.create({
+                drinkId,
+                userId: 2
+            })
+        } else { console.log("จนก็ไม่ต้องซื้อ") }
+    }).then( rs => {
+        res.json(rs)
+    }).catch(next)
+}
+
+exports.AddOrderAvatar = (req, res, next) => {
+    const { status, hatId, drinkId, avatarId } = req.body
+    Payment.create({
+        emailUser: req.user.email,
+        paymentStatus: status
+    }).then( rs => {
+        Order.create({
+            paymentId: rs.id,
+            userId: req.user.id,
+            hatId: hatId || null,
+            drinkId: drinkId || null,
+            avatarId: avatarId || null
+        })
+    }).then(() => {
+        if (status == "Paid") {
+            UserAvatar.create({
+                avatarId,
+                userId: req.user.id
+            })
+        } else { console.log("จนก็ไม่ต้องซื้อ") }
+    }).then( rs => {
+        res.json(rs)
+    }).catch(next)
+}
+

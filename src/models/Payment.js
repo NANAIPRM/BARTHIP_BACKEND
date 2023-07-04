@@ -14,7 +14,7 @@ module.exports = (sequelize, DataTypes) => {
         Payment.hasOne(models.Order, {
             foreignKey: {
                 name: 'paymentId',
-                allowNull: false,
+                allowNull: true,
             },
             onDelete: 'RESTRICT',
         })
