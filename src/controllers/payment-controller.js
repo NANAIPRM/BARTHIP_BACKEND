@@ -1,10 +1,19 @@
 const STRIPE_SECRET_KEY = process.env.STRIPE_SECRET_KEY
 const stripe = require('stripe')(STRIPE_SECRET_KEY)
-const { Avatar, Drink, Hat, UserHat, UserAvatar, UserDrink, Order, Payment } = require('../models')
+const {
+    Avatar,
+    Drink,
+    Hat,
+    UserHat,
+    UserAvatar,
+    UserDrink,
+    Order,
+    Payment,
+} = require('../models')
 
 exports.checkout = async (req, res, next) => {
     try {
-        console.log('--------------------', req.body)
+        // console.log('--------------------', req.body)
         const data = await stripe.checkout.sessions.create({
             success_url:
                 'http://localhost:5173/thank?session_id={CHECKOUT_SESSION_ID}',
@@ -15,7 +24,7 @@ exports.checkout = async (req, res, next) => {
             line_items: [{ price: req.body.apiId, quantity: 1 }],
             mode: 'payment',
         })
-    
+
         res.json(data)
     } catch (err) {
         next(err)
@@ -24,7 +33,6 @@ exports.checkout = async (req, res, next) => {
 
 exports.payment = async (req, res, next) => {
     try {
-        
         const id = req.user.id
         const data = req.query
         const response = {}
@@ -33,7 +41,7 @@ exports.payment = async (req, res, next) => {
             req.query.session_id
         )
         console.log(session.metadata.drinkId)
-          console.log("________1", session);
+        console.log('________1', session)
         if (session) {
             response.session = session
         }
@@ -44,87 +52,85 @@ exports.payment = async (req, res, next) => {
         //   });
         //   console.log("_______aa", req.query);
 
-
-
         const { customer_details, payment_status } = response.session
         console.log(customer_details)
         const { email } = customer_details
 
         const createPayment = await Payment.create({
             emailUser: payment_status,
-            paymentStatus: email
+            paymentStatus: email,
         })
 
         const lastOrder = await Order.findOne({
-            order: [['createdAt', 'DESC']] // เรียงลำดับโดยใช้ฟิลด์ createdAt ในลำดับมากไปน้อย (DESC)
-          });
+            order: [['createdAt', 'DESC']], // เรียงลำดับโดยใช้ฟิลด์ createdAt ในลำดับมากไปน้อย (DESC)
+        })
 
-          
-          const updatedOrder = await Order.update(
+        const updatedOrder = await Order.update(
             { paymentId: createPayment.id },
             { where: { id: lastOrder.dataValues.id } }
-          );
-          
-if(lastOrder.dataValues.drinkId){ const createUserDrink = await UserDrink.create({
-    drinkId: lastOrder.dataValues.drinkId,
-    userId: id
-})}
+        )
 
-if(lastOrder.dataValues.hatId){ const createUserHat = await UserHat.create({
-    hatId: lastOrder.dataValues.hatId,
-    userId: id
-})}
+        if (lastOrder.dataValues.drinkId) {
+            const createUserDrink = await UserDrink.create({
+                drinkId: lastOrder.dataValues.drinkId,
+                userId: id,
+            })
+        }
 
-if(lastOrder.dataValues.avatarId){ const createUserAvatar = await UserAvatar.create({
-    avatarId: lastOrder.dataValues.avatarId,
-    userId: id
-})}
-       
-       
+        if (lastOrder.dataValues.hatId) {
+            const createUserHat = await UserHat.create({
+                hatId: lastOrder.dataValues.hatId,
+                userId: id,
+            })
+        }
+
+        if (lastOrder.dataValues.avatarId) {
+            const createUserAvatar = await UserAvatar.create({
+                avatarId: lastOrder.dataValues.avatarId,
+                userId: id,
+            })
+        }
 
         res.json({
             message: 'success',
-         
         })
     } catch (err) {
         next(err)
     }
 }
 
-
 exports.createOrder = async (req, res, next) => {
     try {
-       const drinkId = req.body.drinkId
-       const hatId = req.body.hatId
-       const avatarId = req.body.avatarId
-   
-       const id = req.user.id
+        const drinkId = req.body.drinkId
+        const hatId = req.body.hatId
+        const avatarId = req.body.avatarId
 
-       if(drinkId){
-        const createOrder = await Order.create({
-        userId: id,
-        drinkId: drinkId
-    })}
+        const id = req.user.id
 
-    if(hatId){
-        const createOrder = await Order.create({
-        userId: id,
-       hatId:hatId
-    })}
+        if (drinkId) {
+            const createOrder = await Order.create({
+                userId: id,
+                drinkId: drinkId,
+            })
+        }
 
-    if(avatarId){
-        const createOrder = await Order.create({
-        userId: id,
-        avatarId: avatarId
-    })}
-        
-      
+        if (hatId) {
+            const createOrder = await Order.create({
+                userId: id,
+                hatId: hatId,
+            })
+        }
+
+        if (avatarId) {
+            const createOrder = await Order.create({
+                userId: id,
+                avatarId: avatarId,
+            })
+        }
     } catch (err) {
         next(err)
     }
 }
-
-
 
 // exports.payment2 = async (req, res, next) => {
 //     const { hatId, drinkId, avatarId } = req.body;
@@ -135,7 +141,7 @@ exports.createOrder = async (req, res, next) => {
 //     if (session) {
 //         response.session = session;
 //     }
-        
+
 //     const { customer_details, payment_status } = response.session;
 //     const { email } = customer_details;
 
@@ -149,8 +155,7 @@ exports.createOrder = async (req, res, next) => {
 //         userId: 2,
 //         drinkId: 2 || null
 //     });
-   
-   
+
 //         if (Payment.paymentStatus == "paid") {
 //             return UserDrink.create({
 //                 drinkId: 2,
@@ -159,21 +164,18 @@ exports.createOrder = async (req, res, next) => {
 //         } else {
 //             console.log("จนก็ไม่ต้องซื้อ");
 //         }
-    
 
 // exports.payment2 = async (req, res, next) => {
 //     const {hatId, drinkId, avatarId} = req.body
 //         // const user = req.user
 //         const data = req.query
 //         const response = {}
-        
 
 //         const session = await stripe.checkout.sessions.retrieve(req.query.session_id)
 //         if (session) {response.session = session}
-       
-        
+
 //         const { customer_details, payment_status } = response.session
-        
+
 //         const { email } = customer_details
 
 //         Payment.create({
@@ -184,9 +186,9 @@ exports.createOrder = async (req, res, next) => {
 //             Order.create({
 //                 paymentId: 2,
 //                 userId: 2,
-              
+
 //                 drinkId: 2 || null,
-            
+
 //             })
 //         }).then(() => {
 //             if (Payment.paymentStatus == "paid") {
@@ -199,5 +201,4 @@ exports.createOrder = async (req, res, next) => {
 //             res.json(rs)
 //         }).catch(next)
 
-        
 // }
