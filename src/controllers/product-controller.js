@@ -72,7 +72,8 @@ exports.AddHat = async (req, res, next) => {
 exports.EditAvatar = async (req, res, next) => {
     try {
         const { id } = req.params
-        const { name, price } = req.body
+
+        const { name, price, description } = req.body
 
         const image = req.file
             ? (await uploadService.upload(req.file.path)).secure_url
@@ -88,12 +89,17 @@ exports.EditAvatar = async (req, res, next) => {
         if (image) {
             updateData.image = image
         }
+        if (description) {
+            updateData.description = description
+        }
 
         await Avatar.update(updateData, {
             where: { id: id },
         })
 
         const updatedAvatar = await Avatar.findByPk(id)
+
+        console.log(updatedAvatar)
 
         if (!updatedAvatar) {
             throw createError(404, 'Avatar not found')
@@ -107,7 +113,7 @@ exports.EditAvatar = async (req, res, next) => {
 exports.EditHat = async (req, res, next) => {
     try {
         const { id } = req.params
-        const { name, price } = req.body
+        const { name, price, description } = req.body
 
         const image = req.file
             ? (await uploadService.upload(req.file.path)).secure_url
@@ -122,6 +128,9 @@ exports.EditHat = async (req, res, next) => {
         }
         if (image) {
             updateData.image = image
+        }
+        if (description) {
+            updateData.description = description
         }
 
         await Hat.update(updateData, {
@@ -142,7 +151,7 @@ exports.EditHat = async (req, res, next) => {
 exports.EditDrink = async (req, res, next) => {
     try {
         const { id } = req.params
-        const { name, price } = req.body
+        const { name, price, description } = req.body
 
         const image = req.file
             ? (await uploadService.upload(req.file.path)).secure_url
@@ -157,6 +166,9 @@ exports.EditDrink = async (req, res, next) => {
         }
         if (image) {
             updateData.image = image
+        }
+        if (description) {
+            updateData.description = description
         }
 
         await Drink.update(updateData, {
@@ -193,9 +205,9 @@ exports.DeleteAvatar = async (req, res, next) => {
 }
 exports.DeleteHat = async (req, res, next) => {
     try {
-        const { hatId } = req.params
+        const { id } = req.params
 
-        const deletedHat = await Hat.destroy({ where: { id: hatId } })
+        const deletedHat = await Hat.destroy({ where: { id: id } })
 
         if (deletedHat === 0) {
             throw createError(404, 'Hat not found')
@@ -208,9 +220,9 @@ exports.DeleteHat = async (req, res, next) => {
 }
 exports.DeleteDrink = async (req, res, next) => {
     try {
-        const { drinkId } = req.params
+        const { id } = req.params
 
-        const deletedDrink = await Drink.destroy({ where: { id: drinkId } })
+        const deletedDrink = await Drink.destroy({ where: { id: id } })
 
         if (deletedDrink === 0) {
             throw createError(404, 'Drink not found')
@@ -226,9 +238,9 @@ exports.DeleteDrink = async (req, res, next) => {
 
 exports.GetAvatarById = async (req, res, next) => {
     try {
-        const { avatarId } = req.params
+        const { id } = req.params
 
-        const avatar = await Avatar.findByPk(avatarId)
+        const avatar = await Avatar.findByPk(id)
 
         if (!avatar) {
             throw createError(404, 'Avatar not found')
@@ -241,9 +253,9 @@ exports.GetAvatarById = async (req, res, next) => {
 }
 exports.GetHatById = async (req, res, next) => {
     try {
-        const { hatId } = req.params
+        const { id } = req.params
 
-        const hat = await Hat.findByPk(hatId)
+        const hat = await Hat.findByPk(id)
 
         if (!hat) {
             throw createError(404, 'Hat not found')
@@ -256,9 +268,9 @@ exports.GetHatById = async (req, res, next) => {
 }
 exports.GetDrinkById = async (req, res, next) => {
     try {
-        const { drinkId } = req.params
+        const { id } = req.params
 
-        const drink = await Drink.findByPk(drinkId)
+        const drink = await Drink.findByPk(id)
 
         if (!drink) {
             throw createError(404, 'Drink not found')
